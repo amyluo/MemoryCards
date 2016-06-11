@@ -1,27 +1,32 @@
 <?php
-    require_once 'MemoryGame.php';
-    
-    //Initial game grid
-    define("CARD_COLUMN",6);  //columns of the cards
-    define("CARD_ROW",4);     //rows of the cards
+require_once 'MemoryGame.php';
+require_once 'AutoPlayer.php';
 
-    session_start();
-    //memory_game is a session name to keep game info
-    $game = new MemoryGame(CARD_ROW,CARD_COLUMN);
-    $_SESSION['memory_game'] = $game;
+//Initial game grid
+define("CARD_COLUMN", 6);  //columns of the cards
+define("CARD_ROW", 4);     //rows of the cards
 
-     $cards = $game->getCards();
+session_start();
+//memory_game is a session name to keep game info
+$game = new MemoryGame(CARD_ROW, CARD_COLUMN);
+$cards = $game->getCards();
 
-     //check each card status, flip card face down.
-     foreach ($cards as $card){
-        if ($card->isFaceUp()){
-                   $imgShow = $card->getImgName().".png";
-                   $imgHide = "999.png";
-               } else {
-                   $imgShow = "999.png";
-                   $imgHide = $card->getImgName().".png";
-         }
+$autoPlayer = new AutoPlayer($cards);
 
-         echo ('<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">');
-         echo ('<img class="cardimg" src="images/'.$imgShow.'" data-img-hide="images/'.$imgHide.'" style="display: block; margin-bottom: 5px"/></div>');
-      }
+$_SESSION['memory_game'] = $game;
+$_SESSION['auto_player'] = $autoPlayer;
+
+
+//check each card status, flip card face down.
+foreach ($cards as $pos => $card) {
+    if ($card->isFaceUp()) {
+        $imgShow = $card->getImgName() . ".png";
+        $imgHide = "999.png";
+    } else {
+        $imgShow = "999.png";
+        $imgHide = $card->getImgName() . ".png";
+    }
+    $cardId = 'pos' . $pos;
+    echo('<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">');
+    echo('<img class="cardimg" src="images/' . $imgShow . '" data-img-hide="images/' . $imgHide . '" style="display: block; margin-bottom: 5px"/></div>');
+}
